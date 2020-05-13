@@ -1508,7 +1508,8 @@ public class DynmapPlugin
         /* Initialized the currently loaded worlds */
         if(server.worldServers != null) { 
             for (WorldServer world : server.worldServers) {
-                ForgeWorld w = this.getWorld(world);
+                /*ForgeWorld w = */
+                this.getWorld(world);
                 /*NOTYET - need rest of forge
                 if(DimensionManager.getWorld(world.provider.getDimensionId()) == null) { // If not loaded
                     w.setWorldUnloaded();

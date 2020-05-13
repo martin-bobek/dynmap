@@ -558,7 +558,6 @@ public abstract class BukkitVersionHelperGeneric extends BukkitVersionHelper {
     		Object propmap = callMethod(profile, cmaprofile_getproperties, nullargs, null);
     		if ((propmap != null) && (propmap instanceof ForwardingMultimap)) {
     			ForwardingMultimap<String, Object> fmm = (ForwardingMultimap<String, Object>) propmap;
-    			Collection<Object> txt = fmm.get("textures");
     	        Object textureProperty = Iterables.getFirst(fmm.get("textures"), null);
     	        if (textureProperty != null) {
     				String val = (String) callMethod(textureProperty, cmaproperty_getvalue, nullargs, null);

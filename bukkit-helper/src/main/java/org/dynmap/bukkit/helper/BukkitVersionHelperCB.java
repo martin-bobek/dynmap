@@ -3,7 +3,6 @@ package org.dynmap.bukkit.helper;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -296,7 +295,6 @@ public class BukkitVersionHelperCB extends BukkitVersionHelperGeneric {
                 }
             }
             else if (blockbyidfunc != null) {
-                ArrayList<Object> mats = new ArrayList<Object>();
                 for (int i = 0; i < map.length; i++) {
                     Object blk = blockbyidfunc.invoke(nmsblock, i);
                     if (blk != null) {
