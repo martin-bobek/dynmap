@@ -185,7 +185,7 @@ public class DynmapPlugin
                         String statename = "meta=" + m;
                         if (blkstate != null) {
                             String pstate = null;
-                            for(Entry<IProperty, Comparable> p : blkstate.getProperties().entrySet()) {
+                            for(@SuppressWarnings("rawtypes") Entry<IProperty, Comparable> p : blkstate.getProperties().entrySet()) {
                             	if (pstate == null)
                             		pstate = "";
                             	else 

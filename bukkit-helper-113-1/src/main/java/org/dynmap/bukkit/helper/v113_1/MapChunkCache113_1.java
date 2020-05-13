@@ -15,7 +15,7 @@ public class MapChunkCache113_1 extends AbstractMapChunkCache {
 
     public static class WrappedSnapshot implements Snapshot {
     	private final ChunkSnapshot ss;
-    	private final DataPaletteBlock[] blockids;
+        private final DataPaletteBlock<?>[] blockids;
     	private final int sectionmask;
 		public WrappedSnapshot(ChunkSnapshot ss) {
     		this.ss = ss;
