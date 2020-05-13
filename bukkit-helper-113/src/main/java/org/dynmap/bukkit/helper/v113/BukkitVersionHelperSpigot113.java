@@ -59,13 +59,6 @@ public class BukkitVersionHelperSpigot113 extends BukkitVersionHelperCB {
         w.unloadChunk(cx, cz, false, false);
     }
 
-    private String stripBlockString(String bname) {
-    	int idx = bname.indexOf('{');
-    	if (idx >= 0) bname = bname.substring(idx+1);
-    	idx = bname.indexOf('}');
-    	if (idx >= 0) bname = bname.substring(0, idx);
-    	return bname;
-    }
     /**
      * Get block short name list
      */

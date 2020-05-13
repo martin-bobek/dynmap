@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -118,7 +117,7 @@ public class DynmapPlugin
     private ChatHandler chathandler;
     private HashMap<String, Integer> sortWeights = new HashMap<String, Integer>(); 
     // Drop world load ticket after 30 seconds
-    private long worldIdleTimeoutNS = 30 * 1000000000L;
+//    private long worldIdleTimeoutNS = 30 * 1000000000L;
     private HashMap<String, ForgeWorld> worlds = new HashMap<String, ForgeWorld>();
     private World last_world;
     private ForgeWorld last_fworld;
@@ -319,7 +318,7 @@ public class DynmapPlugin
     }
     
     private static class WorldBusyRecord {
-        long last_ts;
+//        long last_ts;
         Ticket ticket;
     }
     private static HashMap<Integer, WorldBusyRecord> busy_worlds = new HashMap<Integer, WorldBusyRecord>();
@@ -345,10 +344,10 @@ public class DynmapPlugin
                 busy_worlds.put(w.provider.getDimension(), wbr);  // Add to busy list
             }
         }
-        wbr.last_ts = System.nanoTime();
+//        wbr.last_ts = System.nanoTime();
     }
     
-    private void doIdleOutOfWorlds() {
+    /*private void doIdleOutOfWorlds() {
         if (!DynmapMod.useforcedchunks) return;
         long ts = System.nanoTime() - worldIdleTimeoutNS;
         for(Iterator<WorldBusyRecord> itr = busy_worlds.values().iterator(); itr.hasNext();) {
@@ -361,7 +360,7 @@ public class DynmapPlugin
                 itr.remove();
             }
         }
-    }
+    }*/
     
     public static class OurLog implements DynmapLogger {
         Logger log;
