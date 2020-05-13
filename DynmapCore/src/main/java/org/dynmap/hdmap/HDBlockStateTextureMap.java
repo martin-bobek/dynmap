@@ -4,9 +4,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.List;
 
-import org.dynmap.hdmap.TexturePack;
 import org.dynmap.Log;
-import org.dynmap.hdmap.HDBlockModels;
 import org.dynmap.hdmap.TexturePack.BlockTransparency;
 import org.dynmap.hdmap.TexturePack.ColorizingData;
 import org.dynmap.renderer.CustomColorMultiplier;
