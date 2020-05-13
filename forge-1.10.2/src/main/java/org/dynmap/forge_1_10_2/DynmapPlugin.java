@@ -169,7 +169,8 @@ public class DynmapPlugin
     	stateByID = new DynmapBlockState[512*16];	// Simple meta+id map
     	Arrays.fill(stateByID, DynmapBlockState.AIR); // Default to air
     	
-    	for (Block b : Block.REGISTRY) {
+        for (Object ob : Block.REGISTRY) {
+            Block b = (Block)ob;
             if (b == null) continue;
             int i = Block.getIdFromBlock(b);
     		if (i >= (stateByID.length >> 4)) {
