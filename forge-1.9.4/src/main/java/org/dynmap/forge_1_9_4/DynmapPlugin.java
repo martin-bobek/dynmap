@@ -1729,8 +1729,8 @@ public class DynmapPlugin
     
     private boolean onblockchange = false;
     private boolean onlightingchange = false;
-    private boolean onchunkpopulate = false;
-    private boolean onchunkgenerate = false;
+//    private boolean onchunkpopulate = false;
+//    private boolean onchunkgenerate = false;
     private boolean onblockchange_with_id = false;
     
     
@@ -1809,8 +1809,8 @@ public class DynmapPlugin
         // To trigger rendering.
         onblockchange = core.isTrigger("blockupdate");
         onlightingchange = core.isTrigger("lightingupdate");
-        onchunkpopulate = core.isTrigger("chunkpopulate");
-        onchunkgenerate = core.isTrigger("chunkgenerate");
+//        onchunkpopulate = core.isTrigger("chunkpopulate");
+//        onchunkgenerate = core.isTrigger("chunkgenerate");
         onblockchange_with_id = core.isTrigger("blockupdate-with-id");
         if(onblockchange_with_id)
         	onblockchange = true;

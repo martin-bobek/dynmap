@@ -20,8 +20,6 @@ public class FluidStateRenderer extends CustomRenderer {
     private static final int PATCH_FLOWING = 1;
     
     private static final int[] still_patches = { PATCH_STILL, PATCH_STILL, PATCH_FLOWING, PATCH_FLOWING, PATCH_FLOWING, PATCH_FLOWING };
-
-    private static final int[] flow_patches = { PATCH_STILL, PATCH_FLOWING, PATCH_FLOWING, PATCH_FLOWING, PATCH_FLOWING, PATCH_FLOWING };
     
     private static RenderPatch bottom = null; 	// Common bottom patch
 

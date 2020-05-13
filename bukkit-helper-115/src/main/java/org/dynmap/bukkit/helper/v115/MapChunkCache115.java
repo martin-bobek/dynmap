@@ -48,7 +48,6 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
 
 	    private static final int BLOCKS_PER_SECTION = 16 * 16 * 16;
 	    private static final int COLUMNS_PER_CHUNK = 16 * 16;
-        private static final int V1_15_BIOME_PER_CHUNK = 4 * 4 * 64;
 	    private static final byte[] emptyData = new byte[BLOCKS_PER_SECTION / 2];
 	    private static final byte[] fullData = new byte[BLOCKS_PER_SECTION / 2];
 
