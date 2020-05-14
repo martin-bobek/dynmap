@@ -1557,7 +1557,7 @@ public class DynmapPlugin extends JavaPlugin implements DynmapAPI {
                     }
                     /* Touch extreme corners */
                     int x = c.getX() << 4;
-                    int z = c.getZ() << 4;
+                    int z = c.getZ() << 4;      // TODO - Check why param is z+16
                     mapManager.touchVolume(getWorld(event.getWorld()).getName(), x, 0, z, x+15, ymax, z+16, "chunkpopulate");
                 }
             };
