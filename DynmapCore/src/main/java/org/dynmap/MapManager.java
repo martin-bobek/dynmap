@@ -735,6 +735,7 @@ public class MapManager {
                 if(world.isLoaded() == false) {
                     return true;
                 }
+                // TODO - Is it possible this is getting tripped
                 return false; /* Cancelled/aborted */
             }
             /* Update stats */
