@@ -732,6 +732,7 @@ public class MapManager {
                                                       tile.isHightestBlockYDataNeeded(), tile.isBiomeDataNeeded(), 
                                                       tile.isRawBiomeDataNeeded());
             if(cache == null) {
+                Log.severe("Cache is unnexpectedly null");
                 /* If world unloaded, don't cancel */
                 if(world.isLoaded() == false) {
                     return true;
