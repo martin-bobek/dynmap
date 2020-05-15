@@ -1451,7 +1451,7 @@ public class MapManager {
         else
             return false;
     }
-                                                                       
+    // TODO - Why is the tileQueue started twice?
     public void startRendering() {
         render_pool = new DynmapScheduledThreadPoolExecutor();
         tileQueue.start();
