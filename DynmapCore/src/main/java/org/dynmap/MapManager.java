@@ -634,6 +634,7 @@ public class MapManager {
             }
             else {    /* Else, single tile render */
                 if(pauseupdaterenders || tpspauseupdaterenders) {
+                    Log.severe("Delaying single tile render job");
                     scheduleDelayedJob(this, 5*20); /* Retry after 5 seconds */
                     return;
                 }
