@@ -1220,6 +1220,7 @@ public class IsoHDPerspective implements HDPerspective {
         for (int i = 0; i < numshaders; i++) {
             MapTypeState mts = world.getMapState(shaderstate[i].getMap());
             if (mts != null) {
+                // TODO: This runs asynchronously to the DoTouchProcessing thread and can clobber its state. The tile is already validated in that thread.
                 mts.validateTile(tile.tx, tile.ty);
             }
         }
