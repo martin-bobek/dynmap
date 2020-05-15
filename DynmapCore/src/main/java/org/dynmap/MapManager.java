@@ -179,7 +179,7 @@ public class MapManager {
             setContinueExistingPeriodicTasksAfterShutdownPolicy(false);
             setExecuteExistingDelayedTasksAfterShutdownPolicy(false);
         }
-
+        // TODO - This doesn't make any sense; execute and schedule already catch all exceptions without performing a cleanup.
         protected void afterExecute(Runnable r, Throwable x) {
             if(r instanceof FullWorldRenderState) {
                 ((FullWorldRenderState)r).cleanup();
