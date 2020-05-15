@@ -1304,6 +1304,7 @@ public class IsoHDPerspective implements HDPerspective {
 
             mtile.getWriteLock();
             try {
+                // TODO - By chance this may match and then the tile will get rejected.
                 if(mtile.matchesHashCode(crc) == false) {
                     /* Wrap buffer as buffered image */
                     if(rendered[i]) {   
