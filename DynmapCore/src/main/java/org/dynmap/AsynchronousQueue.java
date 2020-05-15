@@ -29,6 +29,7 @@ public class AsynchronousQueue<T> {
         this.normalprio = normalprio;
     }
 
+    // TODO - There is a race condition here if popAll is simultaneously called. Validate that this is not an issue.
     public boolean push(T t) {
         synchronized (lock) {
             if (!set.add(t)) {
