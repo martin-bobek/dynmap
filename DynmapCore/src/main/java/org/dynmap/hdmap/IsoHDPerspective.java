@@ -1132,6 +1132,7 @@ public class IsoHDPerspective implements HDPerspective {
                     corners[idx].x = x*tileWidth + dx; corners[idx].y = y*tileHeight + dy; corners[idx].z = z*t.getDynmapWorld().worldheight;
                     map_to_world.transform(corners[idx]);
                     /* Compute chunk coordinates of corner */
+                    // TODO - Does the fastFloor function floor too aggressively to multiples of 128.
                     int cx = fastFloor(corners[idx].x / 16);
                     int cz = fastFloor(corners[idx].z / 16);
                     /* Compute min/max of chunk coordinates */
