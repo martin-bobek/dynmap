@@ -1146,6 +1146,8 @@ public class IsoHDPerspective implements HDPerspective {
             }
             dx = basemodscale;
         }
+        Log.severe("Min x: " + min_chunk_x + "   Max x: " + max_chunk_x + "Min z: " + min_chunk_z + "   Max z: " + max_chunk_z);
+        
         /* Make rectangles of X-Z projection of each side of the tile volume, 0 = top, 1 = bottom, 2 = left, 3 = right,
          * 4 = upper, 5 = lower */
         Polygon[] side = new Polygon[6];
