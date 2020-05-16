@@ -86,6 +86,15 @@ public class MapTypeState {
         }
     }
     
+    public void validateTileDebug(int tx, int ty) {
+        synchronized(invTileLock) {
+            invTiles.setFlag(tx, ty,  false);
+            boolean prev = pendingInvTiles.setFlag(tx, ty, false);
+            boolean prevAlt = pendingInvTilesAlt.setFlag(tx, ty, false);
+            Log.severe("Norm: " + prev + "   Alt: " + prevAlt);
+        }
+    }
+
     public boolean isInvalidTile(int tx, int ty) {
         synchronized(invTileLock) {
             return invTiles.getFlag(tx, ty);

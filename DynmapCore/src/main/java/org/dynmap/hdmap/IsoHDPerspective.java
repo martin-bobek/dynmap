@@ -1146,7 +1146,7 @@ public class IsoHDPerspective implements HDPerspective {
             }
             dx = basemodscale;
         }
-        Log.severe("Min x: " + min_chunk_x + "   Max x: " + max_chunk_x + "Min z: " + min_chunk_z + "   Max z: " + max_chunk_z);
+        //Log.severe("Min x: " + min_chunk_x + "   Max x: " + max_chunk_x + "Min z: " + min_chunk_z + "   Max z: " + max_chunk_z);
         
         /* Make rectangles of X-Z projection of each side of the tile volume, 0 = top, 1 = bottom, 2 = left, 3 = right,
          * 4 = upper, 5 = lower */
@@ -1223,9 +1223,10 @@ public class IsoHDPerspective implements HDPerspective {
             MapTypeState mts = world.getMapState(shaderstate[i].getMap());
             if (mts != null) {
                 // TODO: This runs asynchronously to the DoTouchProcessing thread and can clobber its state. The tile is already validated in that thread.
-                mts.validateTile(tile.tx, tile.ty);
+//                mts.validateTileDebug(tile.tx, tile.ty);
             }
         }
+        Log.severe("Tile render at (" + tile.tx + ", " + tile.ty + ")");
         /* Create perspective state object */
         OurPerspectiveState ps = new OurPerspectiveState(mapiter, isnether, scaled);        
         
