@@ -489,6 +489,7 @@ public class MapManager {
             	if (!shutdown) {
             	    saveRefresh();
             	}
+                Log.severe("Render cancelled at (" + (16 * tile0.tileOrdinalX()) + ", " + (-16 * tile0.tileOrdinalY() - 16) + ")");
             	return;
             }
             if(tile0 == null) {    /* Not single tile render */
@@ -637,7 +638,7 @@ public class MapManager {
             }
             else {    /* Else, single tile render */
                 if(pauseupdaterenders || tpspauseupdaterenders) {
-                    Log.severe("Delaying single tile render job");
+                    Log.severe("Delaying render at (" + (16 * tile0.tileOrdinalX()) + ", " + (-16 * tile0.tileOrdinalY() - 16) + ")");
                     scheduleDelayedJob(this, 5*20); /* Retry after 5 seconds */
                     return;
                 }
@@ -735,7 +736,7 @@ public class MapManager {
                                                       tile.isHightestBlockYDataNeeded(), tile.isBiomeDataNeeded(), 
                                                       tile.isRawBiomeDataNeeded());
             if(cache == null) {
-                Log.severe("Cache is unnexpectedly null");
+                Log.severe("Cache null for (" + (16 * tile0.tileOrdinalX()) + ", " + (-16 * tile0.tileOrdinalY() - 16) + ")");
                 /* If world unloaded, don't cancel */
                 if(world.isLoaded() == false) {
                     return true;
@@ -759,11 +760,14 @@ public class MapManager {
             if(tile0 != null) {    /* Single tile? */
                 if(cache.isEmpty() == false) {
                     if (skipTile) {
+                        Log.severe("Skipping tile at (" + (16 * tile0.tileOrdinalX()) + ", " + (-16 * tile0.tileOrdinalY() - 16) + ")");
                         skipcnt++;
                     } else {
                         tile.render(cache, null);
                     }
                 }
+                else
+                    Log.severe("Cache empty for (" + (16 * tile0.tileOrdinalX()) + ", " + (-16 * tile0.tileOrdinalY() - 16) + ")");
             }
             else {
         		/* Remove tile from tile queue, since we're processing it already */

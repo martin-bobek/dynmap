@@ -1193,8 +1193,10 @@ public class IsoHDPerspective implements HDPerspective {
         /* Build shader state object for each shader */
         HDShaderState[] shaderstate = MapManager.mapman.hdmapman.getShaderStateForTile(tile, cache, mapiter, mapname, sizescale * this.basemodscale);
         int numshaders = shaderstate.length;
-        if(numshaders == 0)
+        if(numshaders == 0) {
+            Log.severe("Render rejected: no shaders (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
             return false;
+        }
         /* Check if nether world */
         boolean isnether = world.isNether();
         /* Create buffered image for each */
@@ -1310,10 +1312,12 @@ public class IsoHDPerspective implements HDPerspective {
                 // TODO - By chance this may match and then the tile will get rejected.
                 if(mtile.matchesHashCode(crc) == false) {
                     /* Wrap buffer as buffered image */
-                    if(rendered[i]) {   
+                    if(rendered[i]) {
+                        Log.severe("Tile written at (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
                         mtile.write(crc, im[i].buf_img);
                     }
                     else {
+                        Log.severe("Tile rejected: empty (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
                         mtile.delete();
                     }
                     MapManager.mapman.pushUpdate(tile.getDynmapWorld(), new Client.Tile(mtile.getURI()));
@@ -1321,6 +1325,7 @@ public class IsoHDPerspective implements HDPerspective {
                     renderone = true;
                 }
                 else {
+                    Log.severe("Tile rejected: matches CRC (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
                     if(!rendered[i]) {   
                         mtile.delete();
                     }
