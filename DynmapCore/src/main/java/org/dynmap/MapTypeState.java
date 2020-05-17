@@ -88,10 +88,11 @@ public class MapTypeState {
     
     public void validateTileDebug(int tx, int ty) {
         synchronized(invTileLock) {
-            invTiles.setFlag(tx, ty,  false);
-            boolean prev = pendingInvTiles.setFlag(tx, ty, false);
-            boolean prevAlt = pendingInvTilesAlt.setFlag(tx, ty, false);
-            Log.severe("Norm: " + prev + "   Alt: " + prevAlt);
+            boolean pend = invTiles.setFlag(tx, ty,  false);
+            boolean pendNorm = pendingInvTiles.setFlag(tx, ty, false);
+            boolean pendAlt = pendingInvTilesAlt.setFlag(tx, ty, false);
+            if (pend || pendNorm || pendAlt)
+                Log.severe("Double clear (" + (16 * tx) + ", " + (-16 * ty - 16) + ")   Pend: " + pend + "   Norm: " + pendNorm + "   Alt: " + pendAlt);
         }
     }
 
