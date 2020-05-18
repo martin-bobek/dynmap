@@ -37,6 +37,7 @@ public class Helper {
                 BukkitVersionHelper.helper = new BukkitVersionHelperGlowstone();
             }
             else if (v.contains("(MC: 1.15)") || v.contains("(MC: 1.15.")) {
+                Log.severe("Using BukkitVersionHelperSpigot115");
                 BukkitVersionHelper.helper = new BukkitVersionHelperSpigot115();
             }
             else if (v.contains("(MC: 1.14.1)") || v.contains("(MC: 1.14.2)") ||

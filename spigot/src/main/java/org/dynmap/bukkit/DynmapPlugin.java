@@ -446,6 +446,7 @@ public class DynmapPlugin extends JavaPlugin implements DynmapAPI {
                 boolean blockdata, boolean highesty, boolean biome, boolean rawbiome) {
             MapChunkCache c = w.getChunkCache(chunks);
             if(c == null) { /* Can fail if not currently loaded */
+                Log.severe("DynmapWorld.getChunkCache returned null");
                 return null;
             }
             if(w.visibility_limits != null) {
@@ -465,6 +466,7 @@ public class DynmapPlugin extends JavaPlugin implements DynmapAPI {
             }
             if(chunks.size() == 0) {    /* No chunks to get? */
                 c.loadChunks(0);
+                Log.severe("Chunks empty: no chunks to get");
                 return c;
             }
 
@@ -493,12 +495,14 @@ public class DynmapPlugin extends JavaPlugin implements DynmapAPI {
                     }
                 });
                 if (f == null) {
+                    Log.severe("Returning null chunks due to null Future");
                     return null;
                 }
                 Boolean delay;
                 try {
                     delay = f.get();
                 } catch (CancellationException cx) {
+                    Log.severe("Returning null chunks due to CancellationException");
                     return null;
                 } catch (ExecutionException ex) {
                     Log.severe("Exception while fetching chunks: ", ex.getCause());
@@ -512,8 +516,10 @@ public class DynmapPlugin extends JavaPlugin implements DynmapAPI {
                 }
             }
             /* If cancelled due to world unload return nothing */
-            if(w.isLoaded() == false)
+            if(w.isLoaded() == false) {
+                Log.severe("Returning null chunks due to world unload");
                 return null;
+            }
             return c;
         }
         @Override
