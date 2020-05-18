@@ -13,11 +13,7 @@ import org.dynmap.DynmapCore;
 import org.dynmap.Log;
 import org.dynmap.bukkit.helper.AbstractMapChunkCache;
 import org.dynmap.bukkit.helper.BukkitVersionHelper;
-import org.dynmap.bukkit.helper.SnapshotCache;
-import org.dynmap.bukkit.helper.SnapshotCache.SnapshotRec;
 import org.dynmap.renderer.DynmapBlockState;
-import org.dynmap.utils.DynIntHashMap;
-import org.dynmap.utils.VisibilityLimit;
 
 import net.minecraft.server.v1_15_R1.Chunk;
 import net.minecraft.server.v1_15_R1.ChunkCoordIntPair;
@@ -323,6 +319,7 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
         return nbt;
     }
     
+    private boolean partialGen;
     private NBTTagCompound loadChunkNBT(World w, int x, int z) {
         CraftWorld cw = (CraftWorld) w;
         NBTTagCompound nbt = null;
@@ -339,12 +336,14 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
             	if ((stat == null) || (stat.equals("full") == false)) {
                     nbt = null;
 
+                    partialGen = true;
                     if (stat == null)
                         Log.severe("Chunk (" + (16 * x) + ", " + (16 * z) + ") Status: NULL");
                     else
                         Log.severe("Chunk (" + (16 * x) + ", " + (16 * z) + ") Status: " + stat);
 
                     if ((stat == null) || stat.equals("") && DynmapCore.migrateChunks()) {
+                        Log.severe("Attempting to create chunk (" + (16 * x) + ", " + (16 * z) + ")");
                         Chunk c = cw.getHandle().getChunkAt(x, z);
                         if (c != null) {
                             nbt = fetchLoadedChunkNBT(w, x, z);
@@ -354,9 +353,6 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
                         }
                         else
                             Log.severe("Failed to create chunk (" + (16 * x) + ", " + (16 * z) + ")");
-                    }
-                    else {
-                        Log.severe("Not attempting to create chunk (" + (16 * x) + ", " + (16 * z) + ")");
                     }
             	}
             }
@@ -373,109 +369,87 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
         return null;
     }
     
-    // Load chunk snapshots
+    private class BukkitSnapshot implements Snapshot {
+        private ChunkSnapshot snap;
+        private Biome[] biomeBaseList = new Biome[256];
+
+        public BukkitSnapshot(ChunkSnapshot snap) {
+            this.snap = snap;
+
+            for (int x = 0; x < 16; x++)
+                for (int z = 0; z < 16; z++)
+                    biomeBaseList[16 * z + x] = snap.getBiome(x, 64, z);
+        }
+
+        @Override
+        public DynmapBlockState getBlockType(int x, int y, int z) {
+            String name = snap.getBlockData(x, y, z).getAsString();
+            String[] parts = name.split("\\[", 1);
+
+            if (parts.length == 1)
+                return DynmapBlockState.getBaseStateByName(name);
+            else
+                return DynmapBlockState.getStateByNameAndState(parts[0], parts[1].substring(0, parts[1].length() - 2));
+        }
+
+        @Override
+        public int getBlockSkyLight(int x, int y, int z) {
+            return snap.getBlockSkyLight(x, y, z);
+        }
+
+        @Override
+        public int getBlockEmittedLight(int x, int y, int z) {
+            return snap.getBlockEmittedLight(x, y, z);
+        }
+
+        @Override
+        public int getHighestBlockYAt(int x, int z) {
+            return snap.getHighestBlockYAt(x, z);
+        }
+
+        @Override
+        public Biome getBiome(int x, int z) {
+            return snap.getBiome(x, 64, z);
+        }
+
+        @Override
+        public boolean isSectionEmpty(int sy) {
+            return snap.isSectionEmpty(sy);
+        }
+
+        @Override
+        public Object[] getBiomeBaseFromSnapshot() {
+            return biomeBaseList;
+        }
+    }
+
     @Override
     public int loadChunks(int max_to_load) {
-        if(dw.isLoaded() == false)
-            return 0;        
-        int cnt = 0;
-        if(iterator == null)
+        if (!dw.isLoaded())
+            return 0;
+        if (iterator == null)
             iterator = chunks.listIterator();
 
-        DynmapCore.setIgnoreChunkLoads(true);
-        // Load the required chunks.
-        while((cnt < max_to_load) && iterator.hasNext()) {
-            long startTime = System.nanoTime();
-            DynmapChunk chunk = iterator.next();
-            boolean vis = true;
-            if(visible_limits != null) {
-                vis = false;
-                for(VisibilityLimit limit : visible_limits) {
-                    if (limit.doIntersectChunk(chunk.x, chunk.z)) {
-                        vis = true;
-                        break;
-                    }
-                }
-            }
-            if(vis && (hidden_limits != null)) {
-                for(VisibilityLimit limit : hidden_limits) {
-                    if (limit.doIntersectChunk(chunk.x, chunk.z)) {
-                        vis = false;
-                        break;
-                    }
-                }
-            }
-            /* Check if cached chunk snapshot found */
-            Snapshot ss = null;
-            long inhabited_ticks = 0;
-            DynIntHashMap tileData = null;
-            int idx = (chunk.x-x_min) + (chunk.z - z_min)*x_dim;
-            SnapshotRec ssr = SnapshotCache.sscache.getSnapshot(dw.getName(), chunk.x, chunk.z, blockdata, biome, biomeraw, highesty); 
-//            if(ssr != null) {
-//                inhabited_ticks = ssr.inhabitedTicks;
-//                if(!vis) {
-//                    if(hidestyle == HiddenChunkStyle.FILL_STONE_PLAIN)
-//                        ss = STONE;
-//                    else if(hidestyle == HiddenChunkStyle.FILL_OCEAN)
-//                        ss = OCEAN;
-//                    else
-//                        ss = EMPTY;
-//                }
-//                else {
-//                    ss = ssr.ss;
-//                }
-//                snaparray[idx] = ss;
-//                snaptile[idx] = ssr.tileData;
-//                inhabitedTicks[idx] = inhabited_ticks;
-//
-//                endChunkLoad(startTime, ChunkStats.CACHED_SNAPSHOT_HIT);
-//                continue;
-//            }
-            // Fetch NTB for chunk if loaded
-            NBTTagCompound nbt = fetchLoadedChunkNBT(w, chunk.x, chunk.z); 
-            boolean did_load = false;
-            if (nbt == null) {
-                // Load NTB for chunk, if it exists
-                nbt = loadChunkNBT(w, chunk.x, chunk.z);
-                did_load = true;
-            }
-            if (nbt != null) {
-                NBTSnapshot nss = new NBTSnapshot(nbt, w.getMaxHeight());
-                ss = nss;
-                inhabited_ticks = nss.getInhabitedTicks();
-                if(!vis) {
-                    if(hidestyle == HiddenChunkStyle.FILL_STONE_PLAIN)
-                        ss = STONE;
-                    else if(hidestyle == HiddenChunkStyle.FILL_OCEAN)
-                        ss = OCEAN;
-                    else
-                        ss = EMPTY;
-                }
-            }
+        int cnt = 0;
+        while (cnt < max_to_load && iterator.hasNext()) {
+            DynmapChunk dynChunk = iterator.next();
+            org.bukkit.Chunk chunk = w.getChunkAt(dynChunk.x, dynChunk.z);
+
+            Snapshot ss;
+            if (!chunk.isLoaded() && !chunk.load(false))
+                ss = EMPTY;
             else {
-                ss = STONE;
+                ChunkSnapshot snap = chunk.getChunkSnapshot(true, true, true);
+                ss = new BukkitSnapshot(snap);
             }
-            ssr = new SnapshotRec();
-            ssr.ss = ss;
-            ssr.inhabitedTicks = inhabited_ticks;
-            ssr.tileData = tileData;
-            SnapshotCache.sscache.putSnapshot(dw.getName(), chunk.x, chunk.z, ssr, blockdata, biome, biomeraw, highesty);
+
+            int idx = (dynChunk.x - x_min) + x_dim * (dynChunk.z - z_min);
             snaparray[idx] = ss;
-            snaptile[idx] = ssr.tileData;
-            inhabitedTicks[idx] = inhabited_ticks;
-            if (nbt == null)
-                endChunkLoad(startTime, ChunkStats.UNGENERATED_CHUNKS);
-            else if (did_load)
-                endChunkLoad(startTime, ChunkStats.UNLOADED_CHUNKS);
-            else
-                endChunkLoad(startTime, ChunkStats.LOADED_CHUNKS);
             cnt++;
         }
-        DynmapCore.setIgnoreChunkLoads(false);
 
-        if(iterator.hasNext() == false) {   /* If we're done */
+        if(iterator.hasNext() == false) {
             isempty = true;
-            /* Fill missing chunks with empty dummy chunk */
             for(int i = 0; i < snaparray.length; i++) {
                 if(snaparray[i] == null)
                     snaparray[i] = EMPTY;
@@ -486,4 +460,122 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
 
         return cnt;
     }
+
+//    // Load chunk snapshots
+//    @Override
+//    public int loadChunks(int max_to_load) {
+//        if(dw.isLoaded() == false)
+//            return 0;
+//        int cnt = 0;
+//        if(iterator == null)
+//            iterator = chunks.listIterator();
+//
+//        DynmapCore.setIgnoreChunkLoads(true);
+//        // Load the required chunks.
+//        while((cnt < max_to_load) && iterator.hasNext()) {
+//            long startTime = System.nanoTime();
+//            DynmapChunk chunk = iterator.next();
+//            boolean vis = true;
+//            if(visible_limits != null) {
+//                vis = false;
+//                for(VisibilityLimit limit : visible_limits) {
+//                    if (limit.doIntersectChunk(chunk.x, chunk.z)) {
+//                        vis = true;
+//                        break;
+//                    }
+//                }
+//            }
+//            if(vis && (hidden_limits != null)) {
+//                for(VisibilityLimit limit : hidden_limits) {
+//                    if (limit.doIntersectChunk(chunk.x, chunk.z)) {
+//                        vis = false;
+//                        break;
+//                    }
+//                }
+//            }
+//            /* Check if cached chunk snapshot found */
+//            Snapshot ss = null;
+//            long inhabited_ticks = 0;
+//            DynIntHashMap tileData = null;
+//            int idx = (chunk.x-x_min) + (chunk.z - z_min)*x_dim;
+//            SnapshotRec ssr = SnapshotCache.sscache.getSnapshot(dw.getName(), chunk.x, chunk.z, blockdata, biome, biomeraw, highesty);
+////            if(ssr != null) {
+////                inhabited_ticks = ssr.inhabitedTicks;
+////                if(!vis) {
+////                    if(hidestyle == HiddenChunkStyle.FILL_STONE_PLAIN)
+////                        ss = STONE;
+////                    else if(hidestyle == HiddenChunkStyle.FILL_OCEAN)
+////                        ss = OCEAN;
+////                    else
+////                        ss = EMPTY;
+////                }
+////                else {
+////                    ss = ssr.ss;
+////                }
+////                snaparray[idx] = ss;
+////                snaptile[idx] = ssr.tileData;
+////                inhabitedTicks[idx] = inhabited_ticks;
+////
+////                endChunkLoad(startTime, ChunkStats.CACHED_SNAPSHOT_HIT);
+////                continue;
+////            }
+//            // Fetch NTB for chunk if loaded
+//            NBTTagCompound nbt = fetchLoadedChunkNBT(w, chunk.x, chunk.z);
+//            boolean did_load = false;
+//            partialGen = false;
+//            if (nbt == null) {
+//                // Load NTB for chunk, if it exists
+//                nbt = loadChunkNBT(w, chunk.x, chunk.z);
+//                did_load = true;
+//            }
+//            if (nbt != null) {
+//                NBTSnapshot nss = new NBTSnapshot(nbt, w.getMaxHeight());
+//                ss = nss;
+//                inhabited_ticks = nss.getInhabitedTicks();
+//                if(!vis) {
+//                    if(hidestyle == HiddenChunkStyle.FILL_STONE_PLAIN)
+//                        ss = STONE;
+//                    else if(hidestyle == HiddenChunkStyle.FILL_OCEAN)
+//                        ss = OCEAN;
+//                    else
+//                        ss = EMPTY;
+//                }
+//            }
+//            else {
+//                if (partialGen)
+//                    ss = STONE;
+//                else
+//                    ss = EMPTY;
+//            }
+//            ssr = new SnapshotRec();
+//            ssr.ss = ss;
+//            ssr.inhabitedTicks = inhabited_ticks;
+//            ssr.tileData = tileData;
+//            SnapshotCache.sscache.putSnapshot(dw.getName(), chunk.x, chunk.z, ssr, blockdata, biome, biomeraw, highesty);
+//            snaparray[idx] = ss;
+//            snaptile[idx] = ssr.tileData;
+//            inhabitedTicks[idx] = inhabited_ticks;
+//            if (nbt == null)
+//                endChunkLoad(startTime, ChunkStats.UNGENERATED_CHUNKS);
+//            else if (did_load)
+//                endChunkLoad(startTime, ChunkStats.UNLOADED_CHUNKS);
+//            else
+//                endChunkLoad(startTime, ChunkStats.LOADED_CHUNKS);
+//            cnt++;
+//        }
+//        DynmapCore.setIgnoreChunkLoads(false);
+//
+//        if(iterator.hasNext() == false) {   /* If we're done */
+//            isempty = true;
+//            /* Fill missing chunks with empty dummy chunk */
+//            for(int i = 0; i < snaparray.length; i++) {
+//                if(snaparray[i] == null)
+//                    snaparray[i] = EMPTY;
+//                else if(snaparray[i] != EMPTY)
+//                    isempty = false;
+//            }
+//        }
+//
+//        return cnt;
+//    }
 }
