@@ -435,7 +435,7 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
                 }
             }
             else {
-                ss = EMPTY;
+                ss = STONE;
             }
             ssr = new SnapshotRec();
             ssr.ss = ss;
