@@ -481,8 +481,8 @@ public class MapManager {
             MapTile tile = null;
             List<MapTile> tileset = null;
             
-//            if (tile0 != null)
-//                Log.severe("Started render at (" + (16 * tile0.tileOrdinalX()) + ", " + (-16 * tile0.tileOrdinalY() - 16) + ")");
+            if (tile0 != null)
+                Log.severe("Started render at (" + (16 * tile0.tileOrdinalX()) + ", " + (-16 * tile0.tileOrdinalY() - 16) + ")");
 
             if(cancelled) {
             	cleanup();
@@ -1030,7 +1030,7 @@ public class MapManager {
                 new Handler<MapTile>() {
                 @Override
                 public void handle(MapTile t) {
-//                    Log.severe("Queueing render job: (" + (16 * t.tileOrdinalX()) + ", " + (-16 * t.tileOrdinalY() - 16) + ")");
+                    Log.severe("Queueing render job: (" + (16 * t.tileOrdinalX()) + ", " + (-16 * t.tileOrdinalY() - 16) + ")");
                     FullWorldRenderState job = new FullWorldRenderState(t);
                     if(!scheduleDelayedJob(job, 0))
                         job.cleanup();
