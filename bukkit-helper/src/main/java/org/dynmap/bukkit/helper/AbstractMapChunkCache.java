@@ -933,6 +933,7 @@ public abstract class AbstractMapChunkCache extends MapChunkCache {
      */
     public boolean isDoneLoading() {
         if(dw.isLoaded() == false) {
+            Log.severe("Loading chunks on unloaded world");
             isempty = true;
             unloadChunks();
             return true;

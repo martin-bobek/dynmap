@@ -393,26 +393,26 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
             DynIntHashMap tileData = null;
             int idx = (chunk.x-x_min) + (chunk.z - z_min)*x_dim;
             SnapshotRec ssr = SnapshotCache.sscache.getSnapshot(dw.getName(), chunk.x, chunk.z, blockdata, biome, biomeraw, highesty); 
-            if(ssr != null) {
-                inhabited_ticks = ssr.inhabitedTicks;
-                if(!vis) {
-                    if(hidestyle == HiddenChunkStyle.FILL_STONE_PLAIN)
-                        ss = STONE;
-                    else if(hidestyle == HiddenChunkStyle.FILL_OCEAN)
-                        ss = OCEAN;
-                    else
-                        ss = EMPTY;
-                }
-                else {
-                    ss = ssr.ss;
-                }
-                snaparray[idx] = ss;
-                snaptile[idx] = ssr.tileData;
-                inhabitedTicks[idx] = inhabited_ticks;
-                
-                endChunkLoad(startTime, ChunkStats.CACHED_SNAPSHOT_HIT);
-                continue;
-            }
+//            if(ssr != null) {
+//                inhabited_ticks = ssr.inhabitedTicks;
+//                if(!vis) {
+//                    if(hidestyle == HiddenChunkStyle.FILL_STONE_PLAIN)
+//                        ss = STONE;
+//                    else if(hidestyle == HiddenChunkStyle.FILL_OCEAN)
+//                        ss = OCEAN;
+//                    else
+//                        ss = EMPTY;
+//                }
+//                else {
+//                    ss = ssr.ss;
+//                }
+//                snaparray[idx] = ss;
+//                snaptile[idx] = ssr.tileData;
+//                inhabitedTicks[idx] = inhabited_ticks;
+//
+//                endChunkLoad(startTime, ChunkStats.CACHED_SNAPSHOT_HIT);
+//                continue;
+//            }
             // Fetch NTB for chunk if loaded
             NBTTagCompound nbt = fetchLoadedChunkNBT(w, chunk.x, chunk.z); 
             boolean did_load = false;
