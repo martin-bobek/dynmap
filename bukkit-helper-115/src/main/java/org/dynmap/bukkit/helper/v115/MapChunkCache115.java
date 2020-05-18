@@ -383,13 +383,17 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
 
         @Override
         public DynmapBlockState getBlockType(int x, int y, int z) {
-            String name = snap.getBlockData(x, y, z).getAsString();
-            String[] parts = name.split("\\[", 1);
+//            String name = snap.getBlockData(x, y, z).getAsString();
+//            String[] parts = name.split("\\[", 1);
 
-            if (parts.length == 1)
-                return DynmapBlockState.getBaseStateByName(name);
-            else
-                return DynmapBlockState.getStateByNameAndState(parts[0], parts[1].substring(0, parts[1].length() - 2));
+//            if (parts.length == 1)
+//                return DynmapBlockState.getBaseStateByName(name);
+//            else
+//                return DynmapBlockState.getBaseStateByName(parts[1]);
+//                return DynmapBlockState.getStateByNameAndState(parts[0], parts[1].substring(0, parts[1].length() - 2));
+            if (y <= getHighestBlockYAt(x, z))
+                return DynmapBlockState.getBaseStateByName(DynmapBlockState.STONE_BLOCK);
+            return DynmapBlockState.AIR;
         }
 
         @Override
@@ -409,7 +413,7 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
 
         @Override
         public Biome getBiome(int x, int z) {
-            return snap.getBiome(x, 64, z);
+            return snap.getBiome(x, z);
         }
 
         @Override
@@ -433,15 +437,27 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
         int cnt = 0;
         while (cnt < max_to_load && iterator.hasNext()) {
             DynmapChunk dynChunk = iterator.next();
-            org.bukkit.Chunk chunk = w.getChunkAt(dynChunk.x, dynChunk.z);
-
             Snapshot ss;
-            if (!chunk.isLoaded() && !chunk.load(false))
+
+            if (!w.isChunkGenerated(dynChunk.x, dynChunk.z))
                 ss = EMPTY;
             else {
-                ChunkSnapshot snap = chunk.getChunkSnapshot(true, true, true);
-                ss = new BukkitSnapshot(snap);
+                ss = STONE;
+////                w.unloadChunk()
+//                org.bukkit.Chunk chunk = w.getChunkAt(dynChunk.x, dynChunk.z);
+//                ChunkSnapshot snap = chunk.getChunkSnapshot(true, true, true);
+//                ss = new BukkitSnapshot(snap);
             }
+
+//            org.bukkit.Chunk chunk = w.getChunkAt(dynChunk.x, dynChunk.z);
+
+//            Snapshot ss;
+//            if (!chunk.isLoaded() && !chunk.load(false))
+//                ss = EMPTY;
+//            else {
+//                ChunkSnapshot snap = chunk.getChunkSnapshot(true, true, true);
+//                ss = new BukkitSnapshot(snap);
+//            }
 
             int idx = (dynChunk.x - x_min) + x_dim * (dynChunk.z - z_min);
             snaparray[idx] = ss;

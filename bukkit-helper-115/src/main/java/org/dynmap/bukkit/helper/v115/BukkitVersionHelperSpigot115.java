@@ -10,6 +10,7 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
+import org.bukkit.block.Biome;
 import org.dynmap.DynmapChunk;
 import org.dynmap.Log;
 import org.dynmap.bukkit.helper.BukkitVersionHelperCB;
@@ -96,7 +97,8 @@ public class BukkitVersionHelperSpigot115 extends BukkitVersionHelperCB {
     /** Get ID from biomebase */
     @Override
     public int getBiomeBaseID(Object bb) {
-        return IRegistry.BIOME.a((BiomeBase)bb);
+        return ((Biome)bb).ordinal();
+//        return IRegistry.BIOME.a((BiomeBase)bb);
     }
     
     public static IdentityHashMap<IBlockData, DynmapBlockState> dataToState;
