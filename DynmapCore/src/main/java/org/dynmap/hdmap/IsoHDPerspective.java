@@ -1228,7 +1228,7 @@ public class IsoHDPerspective implements HDPerspective {
                 mts.validateTileDebug(tile.tx, tile.ty);
             }
         }
-        Log.severe("Finished render at (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
+//        Log.severe("Finished render at (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
         /* Create perspective state object */
         OurPerspectiveState ps = new OurPerspectiveState(mapiter, isnether, scaled);        
         
@@ -1313,11 +1313,11 @@ public class IsoHDPerspective implements HDPerspective {
                 if(mtile.matchesHashCode(crc) == false) {
                     /* Wrap buffer as buffered image */
                     if(rendered[i]) {
-                        Log.severe("Tile written at (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
+//                        Log.severe("Tile written at (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
                         mtile.write(crc, im[i].buf_img);
                     }
                     else {
-                        Log.severe("Tile rejected: empty (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
+//                        Log.severe("Tile rejected: empty (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
                         mtile.delete();
                     }
                     MapManager.mapman.pushUpdate(tile.getDynmapWorld(), new Client.Tile(mtile.getURI()));
@@ -1325,7 +1325,7 @@ public class IsoHDPerspective implements HDPerspective {
                     renderone = true;
                 }
                 else {
-                    Log.severe("Tile rejected: matches CRC (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
+//                    Log.severe("Tile rejected: matches CRC (" + (16 * tile.tx) + ", " + (-16 * tile.ty - 16) + ")");
                     if(!rendered[i]) {   
                         mtile.delete();
                     }
