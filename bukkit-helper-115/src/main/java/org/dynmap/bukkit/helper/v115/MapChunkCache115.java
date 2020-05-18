@@ -10,6 +10,7 @@ import org.bukkit.ChunkSnapshot;
 import org.bukkit.World;
 import org.dynmap.DynmapChunk;
 import org.dynmap.DynmapCore;
+import org.dynmap.Log;
 import org.dynmap.bukkit.helper.AbstractMapChunkCache;
 import org.dynmap.bukkit.helper.BukkitVersionHelper;
 import org.dynmap.bukkit.helper.SnapshotCache;
@@ -329,6 +330,7 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
         try {
             nbt = cw.getHandle().getChunkProvider().playerChunkMap.read(cc);
         } catch (IOException iox) {
+            Log.severe("IOException while loading chunk (" + (16 * x) + ", " + (16 * z) + "): " + iox.getMessage());
         }
         if (nbt != null) {
             nbt = nbt.getCompound("Level");
@@ -336,14 +338,30 @@ public class MapChunkCache115 extends AbstractMapChunkCache {
             	String stat = nbt.getString("Status");
             	if ((stat == null) || (stat.equals("full") == false)) {
                     nbt = null;
+
+                    if (stat == null)
+                        Log.severe("Chunk (" + (16 * x) + ", " + (16 * z) + ") Status: NULL");
+                    else
+                        Log.severe("Chunk (" + (16 * x) + ", " + (16 * z) + ") Status: " + stat);
+
                     if ((stat == null) || stat.equals("") && DynmapCore.migrateChunks()) {
                         Chunk c = cw.getHandle().getChunkAt(x, z);
                         if (c != null) {
                             nbt = fetchLoadedChunkNBT(w, x, z);
                             cw.getHandle().unloadChunk(c);
+                            if (nbt == null)
+                                Log.severe("Failed to fetch created chunk (" + (16 * x) + ", " + (16 * z) + ")");
                         }
+                        else
+                            Log.severe("Failed to create chunk (" + (16 * x) + ", " + (16 * z) + ")");
+                    }
+                    else {
+                        Log.severe("Not attempting to create chunk (" + (16 * x) + ", " + (16 * z) + ")");
                     }
             	}
+            }
+            else {
+                Log.severe("Failed to get NBT Level for (" + (16 * x) + ", " + (16 * z) + ")");
             }
         }
         return nbt;
